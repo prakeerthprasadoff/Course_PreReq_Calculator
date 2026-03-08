@@ -1,24 +1,10 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Environment variables
+.git
+.gitignore
 .env
 .env.local
-
-# Git
-.git/
-.gitignore
-
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-# IDEs
-.vscode/
-.idea/
-
-# Tests
-tests/
+.pytest_cache
+__pycache__
+**/__pycache__
+frontend/node_modules
+frontend/dist
+agent-tools

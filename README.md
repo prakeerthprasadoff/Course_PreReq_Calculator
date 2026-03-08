@@ -73,6 +73,38 @@ npm run dev
 
 Frontend defaults to `http://localhost:5173` and API to `http://localhost:8000`.
 
+## Deploy on Hugging Face Spaces (Docker)
+
+This repo includes a root `Dockerfile` that:
+- builds `frontend/` with Vite
+- serves the built React app from FastAPI
+- runs a single process on port `7860` (Spaces default)
+
+### Steps
+
+1) Create a **new Hugging Face Space** with **SDK = Docker**.
+2) Push this repository to that Space.
+3) In Space **Settings -> Variables and secrets**, add:
+   - `AZURE_OPENAI_ENDPOINT`
+   - `AZURE_OPENAI_API_KEY` (Secret)
+   - `AZURE_OPENAI_API_VERSION` (e.g. `2024-10-21`)
+   - `AZURE_OPENAI_DEPLOYMENT` (e.g. `gpt-4o`)
+4) Redeploy the Space.
+
+The app UI and API will be served from the same Space URL.
+
+### Optional local Docker smoke test
+
+```bash
+docker build -t course-prereq-planner .
+docker run --rm -p 7860:7860 \
+  -e AZURE_OPENAI_ENDPOINT="..." \
+  -e AZURE_OPENAI_API_KEY="..." \
+  -e AZURE_OPENAI_API_VERSION="2024-10-21" \
+  -e AZURE_OPENAI_DEPLOYMENT="gpt-4o" \
+  course-prereq-planner
+```
+
 ## API Endpoints
 
 - `GET /health`

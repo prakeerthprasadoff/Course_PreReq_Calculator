@@ -1,0 +1,166 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  color: #1f3d2b;
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #2d5f3f;
+}
+
+h2 {
+  margin: 0 0 12px;
+  color: #2d5f3f;
+}
+
+h3 {
+  margin: 8px 0;
+}
+
+.muted {
+  color: #5a8169;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #dbe9e2;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 90px;
+  border-radius: 10px;
+  border: 1px solid #cfe0d7;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+select,
+input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #cfe0d7;
+  padding: 10px;
+  background: #fff;
+  color: #1f3d2b;
+}
+
+select[multiple] {
+  min-height: 160px;
+}
+
+label {
+  display: block;
+  margin: 8px 0 6px;
+  font-weight: 600;
+  color: #2d5f3f;
+}
+
+button {
+  border-radius: 10px;
+  border: none;
+  padding: 10px 16px;
+  background: #4a8b5f;
+  color: #fff;
+  cursor: pointer;
+}
+
+button.primary {
+  margin-top: 12px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.status-box {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #eef8f3;
+  border: 1px solid #d7e7de;
+  min-width: 220px;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+details {
+  border: 1px solid #dbe9e2;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+summary {
+  font-weight: 700;
+  color: #2d5f3f;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-card {
+  width: min(1000px, 92vw);
+  max-height: 88vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #dbe9e2;
+  padding: 12px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.graph-area {
+  min-height: 240px;
+}
+
+.error-text {
+  color: #b42318;
+}
+
+@media (max-width: 860px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

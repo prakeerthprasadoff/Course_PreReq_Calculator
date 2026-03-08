@@ -1,32 +1,24 @@
-# Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM node:20-bookworm-slim AS frontend-builder
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
-# Set the working directory in the container
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy the requirements file into the container at /app
-COPY requirements.txt .
-
-# Install any needed packages specified in requirements.txt
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
 COPY . .
+COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 
-# Expose port 8501 for Streamlit
-EXPOSE 8501
-
-# Health check (optional but good practice for web apps)
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
-
-# Run the Streamlit application
-CMD ["streamlit", "run", "pied_piper_planner.py", "--server.port=8501", "--server.address=0.0.0.0"]
+EXPOSE 7860
+CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
