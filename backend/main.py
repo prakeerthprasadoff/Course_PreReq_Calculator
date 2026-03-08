@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from backend.schemas import (
     CoursesResponse,
@@ -91,4 +94,10 @@ def graph_route(req: GraphRouteRequest) -> GraphRouteResponse:
         desired_courses=set(req.desired_courses),
     )
     return GraphRouteResponse(dot=dot)
+
+
+FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+if FRONTEND_DIST.exists():
+    # Serve built React app (used in Docker/Hugging Face deployment).
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
 
