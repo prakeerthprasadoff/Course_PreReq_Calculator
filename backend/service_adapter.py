@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 from azure_llm_client import AzureLLMClient, load_azure_llm_config
-from planner_engine import PlannerEngine, rule_courses, term_sort_key
+from planner_engine import PlannerEngine, next_term, rule_courses, term_sort_key
 from track_recommender import (
     build_track_payload,
     derive_tracks_from_engine,
@@ -93,7 +93,7 @@ def build_route_graph_dot(
 
     lines: List[str] = [
         "digraph CoursePlan {",
-        'rankdir="LR";',
+        'rankdir="TB";',
         'bgcolor="transparent";',
         'node [shape=box, style="rounded,filled", fillcolor="#f5faf7", color="#4a8b5f", fontname="Helvetica"];',
         'edge [color="#7ba88c"];',
@@ -124,9 +124,22 @@ def list_courses():
     for c in sorted(ENGINE.catalog.values(), key=lambda x: x.code):
         courses.append({"code": c.code, "title": c.title or c.code, "prereq": c.prereq_text})
     terms = sorted(set(ENGINE.term_columns), key=term_sort_key)
+    default_start = "Spring 2026"
+    if default_start not in terms:
+        terms.append(default_start)
+        terms = sorted(set(terms), key=term_sort_key)
+
+    # Extend available graduation options beyond raw CSV offerings so users can pick
+    # future terms (for example Spring 2027) and get infeasibility/fallback guidance.
+    max_term = terms[-1]
+    cur = max_term
+    for _ in range(8):
+        cur = next_term(cur)
+        terms.append(cur)
+
     return {
         "courses": courses,
-        "graduation_terms": terms,
-        "start_term_default": "Spring 2026",
+        "graduation_terms": sorted(set(terms), key=term_sort_key),
+        "start_term_default": default_start,
     }
 

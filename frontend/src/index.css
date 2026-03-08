@@ -17,3 +17,21 @@ body {
   min-width: 320px;
   background: linear-gradient(135deg, #f6fbf8 0%, #edf7f1 100%);
 }
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eef2ff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #818cf8, #06b6d4);
+  border-radius: 999px;
+}

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { instance } from "@viz-js/viz";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 
 interface Props {
   isOpen: boolean;
@@ -8,7 +9,7 @@ interface Props {
 }
 
 export default function RouteGraphModal({ isOpen, onClose, dot }: Props) {
-  const [svgMarkup, setSvgMarkup] = useState<string>("");
+  const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -18,9 +19,10 @@ export default function RouteGraphModal({ isOpen, onClose, dot }: Props) {
       try {
         setError("");
         const viz = await instance();
-        const svg = viz.renderString(dot);
-        if (!cancelled) {
-          setSvgMarkup(svg);
+        const svgElement = viz.renderSVGElement(dot);
+        if (!cancelled && graphContainerRef.current) {
+          graphContainerRef.current.innerHTML = "";
+          graphContainerRef.current.appendChild(svgElement);
         }
       } catch (e) {
         if (!cancelled) {
@@ -37,18 +39,28 @@ export default function RouteGraphModal({ isOpen, onClose, dot }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-card">
-        <div className="modal-header">
-          <h3>Course Route Graph</h3>
-          <button onClick={onClose}>Close</button>
-        </div>
+    <Dialog open={isOpen} onClose={onClose} maxWidth="lg" fullWidth>
+      <DialogTitle>Course Route Graph</DialogTitle>
+      <DialogContent dividers>
         {error ? (
-          <p className="error-text">{error}</p>
+          <Typography color="error">{error}</Typography>
         ) : (
-          <div className="graph-area" dangerouslySetInnerHTML={{ __html: svgMarkup }} />
+          <Box
+            ref={graphContainerRef}
+            sx={{
+              overflow: "auto",
+              "& svg": {
+                width: "100%",
+                height: "auto",
+                minWidth: 640,
+              },
+            }}
+          />
         )}
-      </div>
-    </div>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
   );
 }
