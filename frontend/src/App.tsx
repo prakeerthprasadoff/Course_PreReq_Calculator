@@ -154,6 +154,7 @@ function App() {
     mutationFn: generatePlan,
     onSuccess: async (data) => {
       setPlanResult(data);
+      setRouteIndex(1);
       setTrackResult(null);
       setFinalTrackPlan(null);
       setSelectedTrack("");
@@ -185,6 +186,8 @@ function App() {
   };
 
   const routeCount = planResult?.routes.length ?? 0;
+  const selectedRoute =
+    planResult?.routes[Math.max(0, Math.min(routeIndex - 1, Math.max(0, routeCount - 1)))] ?? null;
   const statusLabel = healthQuery.data?.azure_available ? "Azure Connected" : "Deterministic Mode";
   const statusColor: "success" | "warning" = healthQuery.data?.azure_available ? "success" : "warning";
 
@@ -486,6 +489,24 @@ function App() {
                 </Box>
               )}
 
+              {!planResult.feasible && Object.keys(planResult.alternatives || {}).length > 0 && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    Alternative options
+                  </Typography>
+                  <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
+                    {Object.entries(planResult.alternatives).map(([key, value]) => (
+                      <Chip
+                        key={`${key}-${value}`}
+                        color="secondary"
+                        variant="outlined"
+                        label={`${key.replaceAll("_", " ")}: ${value}`}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
               {planResult.feasible && (
                 <>
                   <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ mb: 2 }}>
@@ -506,33 +527,30 @@ function App() {
                     <Button
                       variant="outlined"
                       startIcon={<TimelineRounded />}
-                      onClick={() => openGraphForRoute(planResult.routes[Math.max(0, routeIndex - 1)])}
+                      onClick={() => selectedRoute && openGraphForRoute(selectedRoute)}
                     >
                       View Course Graph
                     </Button>
                   </Stack>
 
-                  {planResult.routes.map((route, idx) => (
+                  {selectedRoute && (
                     <Paper
-                      key={`route-${idx + 1}`}
+                      key={`route-${routeIndex}`}
                       variant="outlined"
                       sx={{
                         mb: 2,
                         p: 2,
                         borderRadius: 3,
-                        background:
-                          idx === routeIndex - 1
-                            ? "linear-gradient(120deg, rgba(79,70,229,0.08), rgba(6,182,212,0.06))"
-                            : "linear-gradient(120deg, rgba(255,255,255,0.95), rgba(248,250,255,0.9))",
+                        background: "linear-gradient(120deg, rgba(79,70,229,0.08), rgba(6,182,212,0.06))",
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                        Feasible Route {idx + 1}
+                        Feasible Route {routeIndex}
                       </Typography>
                       <Stack spacing={1.2}>
-                        {Object.entries(route).map(([term, courses]) =>
+                        {Object.entries(selectedRoute).map(([term, courses]) =>
                           courses.length ? (
-                            <Box key={`${idx + 1}-${term}`} sx={{ pb: 1 }}>
+                            <Box key={`${routeIndex}-${term}`} sx={{ pb: 1 }}>
                               <Chip size="small" label={term} sx={{ mb: 1 }} />
                               <Divider sx={{ mb: 1 }} />
                               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -540,7 +558,7 @@ function App() {
                                   const isDesired = effectiveDesired.includes(course);
                                   return (
                                     <Chip
-                                      key={`${idx + 1}-${term}-${course}`}
+                                      key={`${routeIndex}-${term}-${course}`}
                                       color={isDesired ? "secondary" : "default"}
                                       variant={isDesired ? "filled" : "outlined"}
                                       label={courseLookup.get(course) ?? course}
@@ -553,7 +571,7 @@ function App() {
                         )}
                       </Stack>
                     </Paper>
-                  ))}
+                  )}
                 </>
               )}
             </Paper>

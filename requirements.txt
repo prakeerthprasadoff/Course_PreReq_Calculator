@@ -4,5 +4,6 @@ networkx>=3.2
 pytest>=8.0.0
 azure-ai-inference>=1.0.0b9
 azure-core>=1.30.0
+openai>=2.0.0
 fastapi>=0.111.0
 uvicorn>=0.30.0
