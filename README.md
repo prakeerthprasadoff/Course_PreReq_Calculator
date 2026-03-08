@@ -1,3 +1,12 @@
+---
+title: Course PreReq Calculator
+emoji: "🎓"
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # Course Prereq Planner
 
 React frontend with a thin FastAPI adapter that reuses existing Python planner and LLM modules.
