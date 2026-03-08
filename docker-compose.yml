@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    # Load environment variables from .env.local if present
+    env_file:
+      - .env.local
+    # Map the current directory to /app in the container for development
+    volumes:
+      - .:/app
+    # Set environment variables explicitly if needed, or rely on .env.local
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
